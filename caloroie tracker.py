@@ -36,7 +36,7 @@ def confirmtdee():
             pass
             5
     else:
-        askOption()
+        maketdee()
 
 def askOption():
     print('[1] To enter a custom food\n[2] To use saved food\n[3] To open food list\n[4] View macros\n[5]\
