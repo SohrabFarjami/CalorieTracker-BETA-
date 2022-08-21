@@ -14,27 +14,11 @@ def confirmtdee():
         try:
             with open("tdee.txt")  as f:
                 lines = f.readlines()
-                print('Continue with tdee ' + str(lines[0]) + '?(Y/N)')
-                tdeeconfirm = None
-                while tdeeconfirm is None:
-                        print('Enter Y/N')
-                        tdeeconfirm = input().upper()
-                        if tdeeconfirm == 'Y' or tdeeconfirm == 'N':
-                            if tdeeconfirm == 'Y':
-                                global tdee
-                                tdee = lines[0]
-                                askOption()
-                            else:
-                                tdeeconfirm = True
-                                maketdee()
-                        else:
-                            tdeeconfirm = None
-                            pass
-                            
+                print('Tdee ' + str(lines[0]))
+                askOption()                
         except IndexError:
             os.remove('tdee.txt')
-            pass
-            5
+            confirmtdee()
     else:
         maketdee()
 
@@ -88,6 +72,7 @@ def maketdee():
                     text_file = open(("tdee.txt") , "w")
                     text_file.write(str(tdee))
                     text_file.close()
+                    print('Tdee ' + str(tdee))
                     askOption()
                 else:
                     maketdee()
@@ -285,4 +270,5 @@ def foodsEaten():
     with open(("tdee " + date + ".txt"), "r") as f:
         lines = f.read()
         print(lines)
+        
 confirmtdee()
