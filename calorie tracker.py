@@ -44,7 +44,7 @@ def askOption():
     choice = input()
     if choice.isdigit():
         if choice == '1':
-            foodName()
+            newFood()
         elif choice == '2':
             addFood()
         elif choice == '3':
@@ -95,85 +95,29 @@ def maketdee():
 
         
 
-def foodName():
-    spam = True
-    while spam == True:
-        print('Enter food name')
-        global food
-        food = input()
-        if food.isalpha():
-            calorie()
-        else:
-            foodName()
-
-
-    calorie()
-
-def calorie():
-    spam = True
-    while spam == True:
-        print('Enter food calorie')
-        global calorie
-        calorie = input()
-        if calorie.isdigit():
-            protein()
-        else:
-            calorie()
-
-
-def protein():
-    spam = True
-    while spam == True:
-        print('Enter food protein')
-        global protein
-        protein = input()
-        if protein.isdigit():
-            fat()
-        else:
-            protein()
-
-def fat():
-    spam = True
-    while spam == True:
-        print('Enter food fat')
-        global fat
-        fat = input()
-        if protein.isdigit():
-            carb()
-        else:
-            fat()
-
-def carb():
-    spam = True
-    while spam == True:
-        print('Enter food carb')
-        global carb
-        carb = input()
-        if protein.isdigit():
-            print(food + '\n' + 'calorie ' + calorie + '\n' + 'protein ' + protein +
-                  '\n' + 'fat ' + fat + '\n' + 'carb ' + carb +
-                    '\n' + 'Confirm? Y/N\n [0] For main menu')
-            confirmation = input().upper()
-            if confirmation == 'Y':
-                save()
-            elif confirmation == '0':
-                askOption()
-            else:
-                foodName()
-            
-        else:
-            carb()
+def newFood():
+    tlist = {'calorie': 0, 'protein': 0, 'fat': 0, 'carb': 0}
+    food = input(f'Enter food name: ')
+    if food.isalpha():
+        for key in tlist:
+            value = input(f"Enter value of {key}: ")
+            try:
+                tlist[key] = int(value)
+            except ValueError:
+                tlist[key] = 0   
+    else:
+        newFood()
+    save(food, tlist['calorie'], tlist['protein'], tlist['fat'], tlist['carb'])
     
-def save():
+def save(food, cal, p, f, c):
     text_file = open(("tdee " + date + ".txt"), "a")
     text_file.write('' + "\n")
-    text_file.write(food + "\n")
-    text_file.write('cal ' + calorie + "\n")
-    text_file.write('protein ' + protein + "\n")
-    text_file.write('fat ' + fat + "\n")
-    text_file.write('carb ' + carb + "\n")
+    text_file.write(str(food) + "\n")
+    text_file.write('cal ' + str(cal) + "\n")
+    text_file.write('protein ' + str(p) + "\n")
+    text_file.write('fat ' + str(f) + "\n")
+    text_file.write('carb ' + str(c) + "\n")
     text_file.close()
-
     calLeft()
 
 def calLeft():
@@ -184,8 +128,8 @@ def calLeft():
         for line in file:
             if 'cal' in line:
                 cal = cal + int(line[4:])
-        print('You have eaten ' + str(cal) + ' calories today.')
-        print(str(int(tdee) - int(cal)) + ' calories left')
+        print('\n\n You have eaten ' + str(cal) + ' calories today.')
+        print(' ' + str(int(tdee) - int(cal)) + ' calories left')
         askOption()
         
 def saveFood():
@@ -240,8 +184,6 @@ def addFood():
         lines = f.readlines()
         for i in range(len(lines)-1):
             if food in lines[i]:
-
-                
                 print(lines[i], end='')
                 print(lines[i+1], end='')
                 print(lines[i+2], end='')
