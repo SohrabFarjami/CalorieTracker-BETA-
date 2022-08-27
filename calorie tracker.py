@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 now = datetime.now()
 tdee = 0
@@ -7,7 +7,7 @@ calorie = 0
 protein = 0
 fat = 0
 carb = 0
-date = now.strftime("%m %d %Y")
+date = now.strftime("%d %m %Y")
 food = ''
 def confirmtdee():
     if os.path.exists("tdee.txt"):
@@ -15,6 +15,8 @@ def confirmtdee():
             with open("tdee.txt")  as f:
                 lines = f.readlines()
                 print('Tdee ' + str(lines[0]))
+                global tdee
+                tdee = int(lines[0])
                 askOption()                
         except IndexError:
             os.remove('tdee.txt')
@@ -34,7 +36,7 @@ def askOption():
         elif choice == '3':
             openFoodList()
         elif choice == '4':
-            macrosLeft()
+            macrosLeft(date)
         elif choice == '5':
             saveFood()
         elif choice == '6':
@@ -81,17 +83,38 @@ def maketdee():
         
 
 def newFood():
+    print('Enter food measurement\n [1] gr\n [2] ml\n [3] Serving')
+    confirm = input()
+    typ = ''
+    if confirm == '1':
+        typ = 'gr'
+        print('Enter gr')
+        amount = input()
+    if confirm == '2':
+        typ = 'ml'
+        print('Enter ml')
+        amount = input()
+    if confirm == '3':
+        typ = 'serving'
+    try:
+        val = int(amount)
+    except ValueError:
+        newFood()
     tlist = {'calorie': 0, 'protein': 0, 'fat': 0, 'carb': 0}
     food = input(f'Enter food name: ')
-    if food.isalpha():
+    if food.replace(' ','').isalpha():
         for key in tlist:
             value = input(f"Enter value of {key}: ")
             try:
-                tlist[key] = int(value)
+                if typ == 'gr' or 'ml':
+                    tlist[key] = int(float(value)) * int(amount)//100
+                if typ == 'serving':
+                    tlist[key] = int(float(value))
             except ValueError:
                 tlist[key] = 0   
     else:
         newFood()
+    
     save(food, tlist['calorie'], tlist['protein'], tlist['fat'], tlist['carb'])
     
 def save(food, cal, p, f, c):
@@ -108,8 +131,6 @@ def save(food, cal, p, f, c):
 def calLeft():
     with open("tdee " + date + ".txt") as file:
         cal = 0
-
-
         for line in file:
             if 'cal' in line:
                 cal = cal + int(line[4:])
@@ -201,9 +222,9 @@ def addFood():
         else:
             print('Try again')
 
-def macrosLeft():
+def macrosLeft(d):
     try:
-        with open("tdee " + date + ".txt" , "r") as file:
+        with open("tdee " + d + ".txt" , "r") as file:
             protein = 0
             carb = 0
             fat = 0
@@ -220,13 +241,18 @@ def macrosLeft():
             print('Cal = ' + str(cal))
             print('Protein = ' + str(protein))
             print('Fat = ' + str(fat))
-            print('Carbs = ' + str(carb))
-            input("Press Enter to continue...")
-            askOption()
+            print('Carbs = ' + str(carb))  
     except FileNotFoundError:
-        input('No entries yet')
+        print('No entries yet')
+    print('[1] To view other entries\n[2] For main menu')
+    confirmation = input()
+    if confirmation == '1':
+        print('Enter date in dd mm yyyy')
+        macrosLeft(input())
+    elif confirmation == '2':
         askOption()
-
+    else:
+        macrosLeft
 
 def deleteFood():
     print('Enter food name')
